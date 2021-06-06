@@ -1,0 +1,217 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "version": "2.0.2",
+        "title": "Dasboard Backend",
+        "description": "GoIT Group-5 Team Project Backend",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
+    "servers": [{ "url": "http://localhost:3001" }],
+    "tags": [
+    {
+        "name": "Auth",
+        "description": "Authorization endpoints"
+    },
+    {
+        "name": "Card",
+        "description": "Card endpoints"
+    }
+    ],
+    "paths": {
+        "/auth/register": {
+            "post": {
+                "tags": ["Auth"],
+                "summary": "User registration",
+                "description": "Some amazing description",
+                "parameters": [],
+                "requestBody": {
+                    "description": "Registration's object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegistrationRequst"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RegistrationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": ["Auth"],
+                "summary": "User Logout",
+                "description": "Some amazing description",
+                "parameters": [],
+                "security": [{ "Bearer": [] }],
+                "requestBody": {},
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "message": "Logout succes"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+
+        "/card": {
+            "get": {
+                "x-swagger-router-controller": "bar",
+                "operationId": "impossible",
+                "tags": ["Card"],
+                "description": "",
+                "parameters": [],
+                "security": [{ "Bearer": [] }],
+                "requestBody": {},
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetAllCardsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": ""
+                    }
+                }
+
+            },
+            "post": {
+                "x-swagger-router-controller": "bar",
+                "operationId": "impossible",
+                "tags": ["Card"],
+                "description": "",
+                "security": [{ "Bearer": [] }],
+                "parameters": [{
+                    "in": "path",
+                    "name": "cardId",
+                    "requred": true,
+                    "type": "string",
+                    "description": ""
+
+                }],
+                "requestBody": {
+                    "description": "Registration's object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegistrationRequst"
+                            }
+                        }
+                    }
+                },
+
+                "responses": {}
+            }
+
+        }
+    },
+    "components": {
+        "schemas": {
+            "RegistrationRequst": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "required": true,
+                        "description": "User email",
+                        "format": "email"
+                    },
+                    "password": {
+                        "type": "string",
+                         "required": true,
+                        "description": "User password",
+                        "example": "qweqwe123"
+                    }
+                }
+            },
+            "RegistrationResponse": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "User email",
+                        "format": "email"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "User email",
+                        "example": "User successful register"
+                    }
+
+                }
+
+            },
+            "GetAllCardsResponse": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                    "email": {
+                        "type": "string",
+                        "required": true,
+                        "description": "User email",
+                        "format": "email"
+                        },
+                    "password": {
+                        "type": "string",
+                         "required": true,
+                        "description": "User password",
+                        "example": "qweqwe123"
+                        }
+                    }
+                }     
+            }
+        },
+        "securitySchemas": {
+            "Bearer": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}
