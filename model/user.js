@@ -12,6 +12,10 @@ const getUserByAccesToken = async accessToken => {
   return await User.findOne({ accessToken })
 }
 
+const getUserByRefreshToken = async refreshToken => {
+  return await User.findOne({ refreshToken })
+}
+
 const getUserByVerifyTokenEmail = async token => {
   return await User.findOne({ verifyTokenEmail: token })
 }
@@ -33,6 +37,7 @@ module.exports = {
   getUserById,
   getUserByEmail,
   getUserByAccesToken,
+  getUserByRefreshToken,
   getUserByVerifyTokenEmail,
   createUser,
   updateAccessAndRefreshToken,

@@ -42,7 +42,7 @@ module.exports.validateUpdateCard = (req, res, next) => {
 }
 
 module.exports.validateObjectId = (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.contactId)) {
+  if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
     res.status(400).json({ message: 'Invalid ObjectId' })
     next(res)
   }

@@ -22,6 +22,6 @@ router.post('/verify', ctrl.repeatVerifyEmail)
 router.post('/login', validateUser, ctrl.logIn)
 router.post('/logout', guard, ctrl.logOut)
 
-// router.post('/current', guard, ctrl.getCurrent)
+router.post('/refresh', ctrl.refreshTokens)
 
 module.exports = router

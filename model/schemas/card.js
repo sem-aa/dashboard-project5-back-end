@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const { Schema, model } = mongoose
+const { Schema, model, SchemaTypes } = mongoose
 
 const cardSchema = new Schema(
   {
