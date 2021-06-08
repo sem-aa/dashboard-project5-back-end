@@ -43,6 +43,8 @@ const userSchema = new Schema(
   {
     versionKey: false,
     timestamps: true,
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
   }
 )
 
