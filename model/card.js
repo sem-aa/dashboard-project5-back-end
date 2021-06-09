@@ -4,14 +4,6 @@ const getAllCards = async userId => {
   return await Card.find({ owner: userId })
 }
 
-const getCardById = async (userId, cardId) => {
-  const results = await Card.findOne({
-    _id: cardId,
-    owner: userId,
-  })
-  return results
-}
-
 const addCard = async (userId, body) => {
   const results = await Card.create({ ...body, owner: userId })
   return results
@@ -29,11 +21,26 @@ const updateCard = async (userId, cardId, body) => {
 }
 
 const removeCard = async (userId, cardId) => {
-  const results = await Card.findByIdAndRemove({
+  return await Card.findOneAndDelete({
     _id: cardId,
     owner: userId,
   })
-  return results
 }
 
-module.exports = { getAllCards, getCardById, addCard, updateCard, removeCard }
+const compliteCard = async (userId, cardId) => {
+  return await Card.findByIdAndUpdate(
+    { _id: cardId, owner: userId },
+    { status: 'Complete' },
+    {
+      new: true,
+    }
+  )
+}
+
+module.exports = {
+  getAllCards,
+  addCard,
+  updateCard,
+  compliteCard,
+  removeCard,
+}

@@ -15,10 +15,6 @@ passport.use(
     try {
       const user = await User.getUserById(payload.id)
       const session = await Session.getSession(payload.id)
-
-      console.log('session.sid: ', session.sid)
-      console.log('payload.sid: ', payload.sid)
-
       if (!user) {
         return new Error('User not found')
       }

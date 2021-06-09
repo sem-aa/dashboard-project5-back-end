@@ -11,6 +11,7 @@ const guard = require('../helper/guard')
 router.get('/', guard, ctrl.getAll)
 router.post('/', guard, validateAddCard, ctrl.create)
 
+router.delete('/:cardId', guard, validateObjectId, ctrl.remove)
 router.patch(
   '/:cardId',
   guard,
@@ -19,14 +20,6 @@ router.patch(
   ctrl.update
 )
 
-// router.patch(
-//   '/:cardId/favorite',
-//   guard,
-//   validateObjectId,
-//   validateUpdateContact,
-//   ctrl.updateFavorite
-// )
-
-// router.delete('/:cardId', guard, validateObjectId, ctrl.remove)
+router.patch('/:cardId/complete', guard, validateObjectId, ctrl.complete)
 
 module.exports = router

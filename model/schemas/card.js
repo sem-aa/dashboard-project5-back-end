@@ -36,6 +36,10 @@ const cardSchema = new Schema(
       type: String,
       default: 'Task',
     },
+    status: {
+      type: String,
+      default: 'Incomplete',
+    },
     owner: {
       type: SchemaTypes.ObjectId,
       ref: 'user',
