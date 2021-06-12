@@ -11,7 +11,7 @@
     },
     "consumes": ["application/json"],
     "produces": ["application/json"],
-    "servers": [{ "url": "http://localhost:3001" }],
+    "servers": [{ "url": "https://dashboard-project-back-end.herokuapp.com/" }],
     "tags": [
     {
         "name": "Auth",
@@ -41,7 +41,7 @@
                     }
                 },
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -51,11 +51,52 @@
                             }
                         }
                     },
+                    "400": {
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
                     "409": {
-                        "description": ""
+                        "description": "Provided email already exists",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": ["Auth"],
+                "summary": "User authentication",
+                "description": "Some amazing description",
+                "parameters": [],
+                "requestBody": {
+                    "description": "Registration's object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequst"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResponse"
+                                }
+                            }
+                        }
                     },
                     "400": {
-                        "description": ""
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Email doesn't exist / Password is wrong",
+                        "content": {}
                     }
                 }
             }
@@ -63,88 +104,247 @@
         "/auth/logout": {
             "post": {
                 "tags": ["Auth"],
-                "summary": "User Logout",
+                "summary": "User logout",
                 "description": "Some amazing description",
                 "parameters": [],
                 "security": [{ "Bearer": [] }],
-                "requestBody": {},
                 "responses": {
-                    "201": {
-                        "description": "",
+                    "204": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "No token provided",
+                        "content": {}
+
+                    },
+                    "401": {
+                        "description": "Unauthorized (invalid access token)",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Invalid user / Invalid session",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "tags": ["Auth"],
+                "summary": "User refresh. Get new pair of tokens (use Bearer {refreshToken} instead of {accessToken})",
+                "description": "In headers instead of the accessToken you need to use refreshToken",
+                "parameters": [],
+                "security": [{ "Bearer": [] }],
+                "requestBody": {
+                    "description": "Object with session's id",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RefreshTokensRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
                         "content": {
                             "application/json": {
-                                "message": "Logout succes"
+                                "schema": {
+                                    "$ref": "#/components/schemas/RefreshTokensResponse"
+                                }
                             }
                         }
                     },
-                    "409": {
-                        "description": ""
-                    },
                     "400": {
-                        "description": ""
+                        "description": "No token provided",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized (invalid access token)",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Invalid user / Invalid session",
+                        "content": {}
                     }
                 }
             }
         },
 
         "/card": {
-            "get": {
-                "x-swagger-router-controller": "bar",
-                "operationId": "impossible",
+            "post": {
                 "tags": ["Card"],
-                "description": "",
+                "summary": "Create card",
+                "description": "Some amazing description",
                 "parameters": [],
                 "security": [{ "Bearer": [] }],
-                "requestBody": {},
-                "responses": {
-                    "201": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/GetAllCardsResponse"
-                                }
-                            }
-                        }
-                    },
-                    "409": {
-                        "description": ""
-                    },
-                    "400": {
-                        "description": ""
-                    }
-                }
-
-            },
-            "post": {
-                "x-swagger-router-controller": "bar",
-                "operationId": "impossible",
-                "tags": ["Card"],
-                "description": "",
-                "security": [{ "Bearer": [] }],
-                "parameters": [{
-                    "in": "path",
-                    "name": "cardId",
-                    "requred": true,
-                    "type": "string",
-                    "description": ""
-
-                }],
                 "requestBody": {
-                    "description": "Registration's object",
+                    "description": "Card's object",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/RegistrationRequst"
+                                "$ref": "#/components/schemas/CreateNewCardRequest"
                             }
                         }
                     }
                 },
-
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CreateNewCardResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Invalid user / Invalid session",
+                        "content": {}
+                    }
+                }
+            },
+            "patch": {
+                "tags": ["Card"],
+                "summary": "Edit card",
+                "description": "Some amazing description",
+                "parameters": [{ 
+                    "name": "cardId",
+                    "in": "path",
+                    "value": "cardId",
+                    "required": true
+                }],  
+                "security": [{ "Bearer": [] }],
+                "requestBody": {
+                    "description": "Edited card's",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EditCardRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditCardResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Invalid user / Invalid session",
+                        "content": {}
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Card"],
+                "summary": "Delete card",
+                "description": "Some amazing description",
+                "parameters": [{ 
+                    "name": "cardId",
+                    "in": "path",
+                    "value": "cardId",
+                    "required": true
+                }],  
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    "204": {
+                        "description": "Successful operation",
+                        "content": {}
+                    },
+                    "400": {
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Invalid user / Invalid session",
+                        "content": {}
+                    }
+                }
+            },
+            "get": {
+                "tags": ["Card"],
+                "summary": "Get all card",
+                "description": "Some amazing description", 
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetAllCardResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Invalid user / Invalid session",
+                        "content": {}
+                    }
+                }
             }
-
+        },
+        "/card/complete": {
+            "patch": {
+                "tags": ["Card"],
+                "summary": "Edit card",
+                "description": "Some amazing description",
+                "parameters": [{ 
+                    "name": "cardId",
+                    "in": "path",
+                    "value": "cardId",
+                    "required": true
+                }],  
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CompleteCardResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Invalid user / Invalid session",
+                        "content": {}
+                    }
+                }
+  
+            }
         }
     },
     "components": {
@@ -156,13 +356,11 @@
                     "email": {
                         "type": "string",
                         "required": true,
-                        "description": "User email",
                         "format": "email"
                     },
                     "password": {
                         "type": "string",
-                         "required": true,
-                        "description": "User password",
+                        "required": true,
                         "example": "qweqwe123"
                     }
                 }
@@ -173,37 +371,366 @@
                 "properties": {
                     "email": {
                         "type": "string",
-                        "description": "User email",
                         "format": "email"
                     },
                     "message": {
                         "type": "string",
-                        "description": "User email",
                         "example": "User successful register"
                     }
-
                 }
 
             },
-            "GetAllCardsResponse": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
+            "LoginRequst": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
                     "email": {
                         "type": "string",
                         "required": true,
-                        "description": "User email",
                         "format": "email"
-                        },
+                    },
                     "password": {
                         "type": "string",
-                         "required": true,
-                        "description": "User password",
+                        "required": true,
                         "example": "qweqwe123"
+                    }
+                }
+            },
+            "LoginResponse": {
+                "type": "object",
+                "properties": {
+                    "accessToken": {
+                        "type": "string",
+                        "required": true,
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXA"
+                    },
+                    "refreshToken": {
+                        "type": "string",
+                        "required": true,
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXB"
+                    },
+                    "sid": {
+                        "type": "string",
+                        "required": true,
+                        "example": "507f1f77bcf86cd799439010"
+                    },
+                    "userData": {
+                        "type": "object",
+                        "properties": {
+                            "email": {
+                                "type": "string",
+                                "format": "email"
+                            },
+                            "id": {
+                                "type": "string",
+                                "example": "507f1f77bcf86cd799439011"
+                            },
+                            "cards": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "title": {
+                                            "type": "string",
+                                            "example": "Take out the trash"
+                                        },
+                                        "difficulty": {
+                                            "type": "string",
+                                            "example": "Easy"
+                                        },
+                                        "category": {
+                                            "type": "string",
+                                            "example": "Stuff"
+                                        },
+                                        "date": {
+                                            "type": "string",
+                                            "example": "2020-12-31"
+                                        },
+                                        "time": {
+                                            "type": "string",
+                                            "example": "20:34"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "Incomplete"
+                                        },
+                                        "type": {
+                                            "type": "string",
+                                            "example": "Task"
+                                        },
+                                        "_id": {
+                                            "type": "string",
+                                            "example": "507f1f77bcf86cd799439013"
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
-                }     
+                }
+            },
+            "RefreshTokensRequest": {
+                "type": "object",
+                "required": ["sid"],
+                "properties": {
+                    "sid": {
+                        "type": "string",
+                        "required": true,
+                        "example": "507f1f77bcf86cd799439010"
+                    }
+                }
+            },
+            "RefreshTokensResponse": {
+                "type": "object",
+                "properties": {
+                    "newAccessToken": {
+                        "type": "string",
+                        "required": true,
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXA"
+                    },
+                    "newRefreshToken": {
+                        "type": "string",
+                        "required": true,
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXB"
+                    },
+                    "newSid": {
+                        "type": "string",
+                        "required": true,
+                        "example": "507f1f77bcf86cd799439010"
+                    }
+                }
+
+            },
+
+
+            "CreateNewCardRequest": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Take out the trash"
+                    },
+                    "difficulty": {
+                        "type": "string",
+                        "example": "Easy"
+                    },
+                    "category": {
+                        "type": "string",
+                        "example": "Stuff"
+                    },
+                    "date": {
+                        "type": "string",
+                        "example": "2020-12-31"
+                    },
+                    "time": {
+                        "type": "string",
+                        "example": "20:34"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "Task"
+                    }
+                }
+            },
+            "CreateNewCardResponse": {
+                "type": "object",
+                "properties": {
+                    "createdCard": {
+                        "type": "object",
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "example": "Take out the trash"
+                            },
+                            "difficulty": {
+                                "type": "string",
+                                "example": "Easy"
+                            },
+                            "category": {
+                                "type": "string",
+                                "example": "Stuff"
+                            },
+                            "date": {
+                                "type": "string",
+                                "example": "2020-12-31"
+                            },
+                            "time": {
+                                "type": "string",
+                                "example": "20:34"
+                            },
+                            "status": {
+                                "type": "string",
+                                "example": "Incomplete"
+                            },
+                            "type": {
+                                "type": "string",
+                                "example": "Task"
+                            },
+                            "_id": {
+                                "type": "string",
+                                "example": "507f1f77bcf86cd799439013"
+                            }
+                        }
+                    }
+                }
+            },
+            "EditCardRequest": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Take out the trash"
+                    },
+                    "difficulty": {
+                        "type": "string",
+                        "example": "Easy"
+                    },
+                    "category": {
+                        "type": "string",
+                        "example": "Stuff"
+                    },
+                    "date": {
+                        "type": "string",
+                        "example": "2020-12-31"
+                    },
+                    "time": {
+                        "type": "string",
+                        "example": "20:34"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "Task"
+                    }
+                }
+            },
+            "EditCardResponse": {
+                "type": "object",
+                "properties": {
+                    "createdCard": {
+                        "type": "object",
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "example": "Take out the trash"
+                            },
+                            "difficulty": {
+                                "type": "string",
+                                "example": "Easy"
+                            },
+                            "category": {
+                                "type": "string",
+                                "example": "Stuff"
+                            },
+                            "date": {
+                                "type": "string",
+                                "example": "2020-12-31"
+                            },
+                            "time": {
+                                "type": "string",
+                                "example": "20:34"
+                            },
+                            "status": {
+                                "type": "string",
+                                "example": "Incomplete"
+                            },
+                            "type": {
+                                "type": "string",
+                                "example": "Task"
+                            },
+                            "_id": {
+                                "type": "string",
+                                "example": "507f1f77bcf86cd799439013"
+                            }
+                        }
+                    }
+                }
+            },
+            "GetAllCardResponse": {
+                "type": "object",
+                "properties": {
+                    "cards": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type": "string",
+                                    "example": "Take out the trash"
+                                },
+                                "difficulty": {
+                                    "type": "string",
+                                    "example": "Easy"
+                                },
+                                "category": {
+                                    "type": "string",
+                                    "example": "Stuff"
+                                },
+                                "date": {
+                                    "type": "string",
+                                    "example": "2020-12-31"
+                                },
+                                "time": {
+                                    "type": "string",
+                                    "example": "20:34"
+                                },
+                                "status": {
+                                    "type": "string",
+                                    "example": "Incomplete"
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "example": "Task"
+                                },
+                                "_id": {
+                                    "type": "string",
+                                    "example": "507f1f77bcf86cd799439013"
+                                }
+                            }
+                        }
+                    }            
+                }
+            },
+            "CompleteCardResponse": {
+                "type": "object",
+                "properties": {
+                    "editedCard": {
+                        "type": "object",
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "example": "Take out the trash"
+                            },
+                            "difficulty": {
+                                "type": "string",
+                                "example": "Easy"
+                            },
+                            "category": {
+                                "type": "string",
+                                "example": "Stuff"
+                            },
+                            "date": {
+                                "type": "string",
+                                "example": "2020-12-31"
+                            },
+                            "time": {
+                                "type": "string",
+                                "example": "20:34"
+                            },
+                            "status": {
+                                "type": "string",
+                                "example": "Complete"
+                            },
+                            "type": {
+                                "type": "string",
+                                "example": "Task"
+                            },
+                            "_id": {
+                                "type": "string",
+                                "example": "507f1f77bcf86cd799439013"
+                            }
+                        }
+                    }
+                }
             }
         },
         "securitySchemas": {
