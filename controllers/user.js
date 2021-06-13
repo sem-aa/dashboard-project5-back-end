@@ -31,7 +31,7 @@ const register = async (req, res, next) => {
     // }
     return res.status(HttpCode.CREATED).json({
       user: {
-        email,
+        email: newUser.email,
       },
     })
   } catch (error) {
