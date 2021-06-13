@@ -16,8 +16,8 @@ const limiter = rateLimit({
 })
 
 router.post('/register', limiter, validateUser, ctrl.register)
-router.get('/verify/:verifyToken', ctrl.verifyToken)
-router.post('/verify', ctrl.repeatVerifyEmail)
+// router.get('/verify/:verifyToken', ctrl.verifyToken)
+// router.post('/verify', ctrl.repeatVerifyEmail)
 
 router.post('/login', validateUser, ctrl.logIn)
 router.post('/logout', guard, ctrl.logOut)
