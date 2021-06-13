@@ -30,15 +30,15 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
-    verifyTokenEmail: {
-      type: String,
-      required: [true, 'Verify token is required'],
-      default: nanoid(),
-    },
-    verify: {
-      type: Boolean,
-      default: false,
-    },
+    // verifyTokenEmail: {
+    //   type: String,
+    //   required: [true, 'Verify token is required'],
+    //   default: nanoid(),
+    // },
+    // verify: {
+    //   type: Boolean,
+    //   default: false,
+    // },
   },
   {
     versionKey: false,

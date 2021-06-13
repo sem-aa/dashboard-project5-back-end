@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 
-const EmailServise = require('../services/email')
+// const EmailServise = require('../services/email')
 const { HttpCode } = require('../helper/constants')
 
 const User = require('../model/user')
@@ -13,24 +13,25 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY
 const JWT_REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET_KEY
 
 const register = async (req, res, next) => {
-  const user = await User.getUserByEmail(req.body.email)
-  if (user) {
-    return res.status(HttpCode.CONFLICT).json({
-      message: 'Email in use',
-    })
-  }
   try {
-    const newUser = await User.createUser(req.body)
-    const { email, verifyTokenEmail } = newUser
-    try {
-      const emailServise = new EmailServise(process.env.NODE_ENV)
-      await emailServise.sendVerifyEmail(verifyTokenEmail, email)
-    } catch (error) {
-      console.log('Error in emailServise.sendVerifyEmail', error.message)
+    const user = await User.getUserByEmail(req.body.email)
+    if (user) {
+      return res.status(HttpCode.CONFLICT).json({
+        message: 'Email in use',
+      })
     }
+
+    const newUser = await User.createUser(req.body)
+    // const { email, verifyTokenEmail } = newUser
+    // try {
+    //   const emailServise = new EmailServise(process.env.NODE_ENV)
+    //   await emailServise.sendVerifyEmail(verifyTokenEmail, email)
+    // } catch (error) {
+    //   console.log('Error in emailServise.sendVerifyEmail', error.message)
+    // }
     return res.status(HttpCode.CREATED).json({
       user: {
-        email,
+        email: newUser.email,
       },
     })
   } catch (error) {
@@ -38,51 +39,51 @@ const register = async (req, res, next) => {
   }
 }
 
-const verifyToken = async (req, res, next) => {
-  try {
-    const user = await User.getUserByVerifyTokenEmail(req.params.verifyToken)
-    if (user.verify) {
-      return res.status(HttpCode.BAD_REQUEST).json({
-        message: 'Verification has already been passed',
-      })
-    }
-    if (user) {
-      await User.updateVerifyToken(user.id, true)
-      return res.status(HttpCode.OK).json({
-        message: 'Verification successful',
-      })
-    }
-    return res.status(HttpCode.NOT_FOUND).json({
-      message: 'User not found',
-    })
-  } catch (error) {
-    next(error)
-  }
-}
+// const verifyToken = async (req, res, next) => {
+//   try {
+//     const user = await User.getUserByVerifyTokenEmail(req.params.verifyToken)
+//     if (user.verify) {
+//       return res.status(HttpCode.BAD_REQUEST).json({
+//         message: 'Verification has already been passed',
+//       })
+//     }
+//     if (user) {
+//       await User.updateVerifyToken(user.id, true)
+//       return res.status(HttpCode.OK).json({
+//         message: 'Verification successful',
+//       })
+//     }
+//     return res.status(HttpCode.NOT_FOUND).json({
+//       message: 'User not found',
+//     })
+//   } catch (error) {
+//     next(error)
+//   }
+// }
 
-const repeatVerifyEmail = async (req, res, next) => {
-  try {
-    if (!req.body.email) {
-      return res.status(HttpCode.BAD_REQUEST).json({
-        message: 'missing required field email',
-      })
-    }
-    const user = await User.getUserByEmail(req.body.email)
-    const { email, verifyTokenEmail, verify } = user
-    if (verify) {
-      return res.status(HttpCode.BAD_REQUEST).json({
-        message: 'Verification has already been passed',
-      })
-    }
-    const emailServise = new EmailServise(process.env.NODE_ENV)
-    await emailServise.sendVerifyEmail(verifyTokenEmail, email)
-    return res.status(HttpCode.OK).json({
-      message: 'Verification email sent',
-    })
-  } catch (error) {
-    next(error)
-  }
-}
+// const repeatVerifyEmail = async (req, res, next) => {
+//   try {
+//     if (!req.body.email) {
+//       return res.status(HttpCode.BAD_REQUEST).json({
+//         message: 'missing required field email',
+//       })
+//     }
+//     const user = await User.getUserByEmail(req.body.email)
+//     const { email, verifyTokenEmail, verify } = user
+//     if (verify) {
+//       return res.status(HttpCode.BAD_REQUEST).json({
+//         message: 'Verification has already been passed',
+//       })
+//     }
+//     const emailServise = new EmailServise(process.env.NODE_ENV)
+//     await emailServise.sendVerifyEmail(verifyTokenEmail, email)
+//     return res.status(HttpCode.OK).json({
+//       message: 'Verification email sent',
+//     })
+//   } catch (error) {
+//     next(error)
+//   }
+// }
 
 const logIn = async (req, res, next) => {
   const { email, password } = req.body
@@ -93,11 +94,11 @@ const logIn = async (req, res, next) => {
       message: 'Email or password is wrong',
     })
   }
-  if (!user.verify) {
-    return res.status(HttpCode.BAD_REQUEST).json({
-      message: 'User not verify',
-    })
-  }
+  // if (!user.verify) {
+  //   return res.status(HttpCode.BAD_REQUEST).json({
+  //     message: 'User not verify',
+  //   })
+  // }
 
   const { sid } = await Session.createSession(user.id)
   const accessToken = jwt.sign({ id: user.id, sid }, JWT_SECRET_KEY, {
