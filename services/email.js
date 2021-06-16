@@ -12,7 +12,7 @@ class EmailServise {
         this.link = 'http://localhost:3001'
         break
       case 'production':
-        this.link = 'link for production'
+        this.link = 'https://dashboard-project-back-end.herokuapp.com/'
         break
       default:
         this.link = 'http://localhost:3001'

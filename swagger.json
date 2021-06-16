@@ -367,7 +367,6 @@
             },
             "RegistrationResponse": {
                 "type": "object",
-                "required": ["email"],
                 "properties": {
                     "email": {
                         "type": "string",
@@ -378,7 +377,6 @@
                         "example": "User successful register"
                     }
                 }
-
             },
             "LoginRequst": {
                 "type": "object",
