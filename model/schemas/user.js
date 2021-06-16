@@ -3,6 +3,8 @@ const bCrypt = require('bcryptjs')
 const { nanoid } = require('nanoid')
 require('dotenv').config()
 
+mongoose.set('useNewUrlParser', true)
+
 const SALT_FACTOR = process.env.SALT_FACTOR
 const { Schema, model } = mongoose
 
