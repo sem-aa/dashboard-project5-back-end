@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const bCrypt = require('bcryptjs')
-const { nanoid } = require('nanoid')
+// const { nanoid } = require('nanoid')
 require('dotenv').config()
 
 mongoose.set('useNewUrlParser', true)
@@ -32,6 +32,14 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
+    updatedPassword: {
+      type: String,
+      default: null,
+    },
+    verifyUpdatePassword: {
+      type: String,
+      default: null,
+    },
     // verifyTokenEmail: {
     //   type: String,
     //   required: [true, 'Verify token is required'],
@@ -56,6 +64,11 @@ userSchema.pre('save', async function (next) {
     this.password = await bCrypt.hash(this.password, salt)
   }
 })
+
+userSchema.methods.hashNewPassword = async function (newPassword) {
+  const salt = await bCrypt.genSalt(Number(SALT_FACTOR))
+  return await bCrypt.hash(newPassword, salt)
+}
 
 userSchema.methods.validPassword = async function (password) {
   return await bCrypt.compare(password, this.password)

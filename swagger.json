@@ -175,6 +175,75 @@
                 }
             }
         },
+        "/auth/restorePassword": {
+            "post": {
+                "tags": ["Auth"],
+                "summary": "User restore password request",
+                "description": "User restore password request",
+                "parameters": [],
+                "requestBody": {
+                    "description": "Object with user email",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RestorePasswordRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RestorePasswordResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/auth/confirmRestorePassword": {
+            "get": {
+                "tags": ["Auth"],
+                "summary": "Confirm user restore password",
+                "description": "Confirm user restore password request",
+                "parameters": [{ 
+                    "name": "verifyUpdatePassword",
+                    "in": "path",
+                    "value": "verifyUpdatePassword",
+                    "required": true
+                }],
+                "requestBody": {},
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConfirmRestorePasswordResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "There was no password update request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {}
+                    }
+                }
+            }
+        },
 
         "/card": {
             "post": {
@@ -345,6 +414,41 @@
                 }
   
             }
+        },
+        "/card/incomplete": {
+            "patch": {
+                "tags": ["Card"],
+                "summary": "Edit card",
+                "description": "Some amazing description",
+                "parameters": [{ 
+                    "name": "cardId",
+                    "in": "path",
+                    "value": "cardId",
+                    "required": true
+                }],  
+                "security": [{ "Bearer": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IncompleteCardResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Invalid user / Invalid session",
+                        "content": {}
+                    }
+                }
+  
+            }
         }
     },
     "components": {
@@ -497,7 +601,36 @@
                         "example": "507f1f77bcf86cd799439010"
                     }
                 }
-
+            },
+            "RestorePasswordRequest": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "required": true,
+                        "format": "email"
+                    }
+                }
+            },
+            "RestorePasswordResponse": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "required": true,
+                        "example": "New password sent to email"
+                    }
+                }
+            },
+            "ConfirmRestorePasswordResponse": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "required": true,
+                        "example": "New password verification was successful"
+                    }
+                }
             },
 
 
@@ -729,6 +862,49 @@
                         }
                     }
                 }
+            },
+            "IncompleteCardResponse": {
+                "type": "object",
+                "properties": {
+                    "editedCard": {
+                        "type": "object",
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "example": "Take out the trash"
+                            },
+                            "difficulty": {
+                                "type": "string",
+                                "example": "Easy"
+                            },
+                            "category": {
+                                "type": "string",
+                                "example": "Stuff"
+                            },
+                            "date": {
+                                "type": "string",
+                                "example": "2020-12-31"
+                            },
+                            "time": {
+                                "type": "string",
+                                "example": "20:34"
+                            },
+                            "status": {
+                                "type": "string",
+                                "example": "Inomplete"
+                            },
+                            "type": {
+                                "type": "string",
+                                "example": "Task"
+                            },
+                            "_id": {
+                                "type": "string",
+                                "example": "507f1f77bcf86cd799439013"
+                            }
+                        }
+                    }
+                }
+  
             }
         },
         "securitySchemas": {

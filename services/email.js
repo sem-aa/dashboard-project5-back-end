@@ -48,6 +48,34 @@ class EmailServise {
     return emailBody
   }
 
+  #createTemplateUpdatePassword(updatePasswordToken, newPassword) {
+    const mailGenerator = new this.#GenerateTemplate({
+      theme: 'cerberus',
+      product: {
+        name: 'Dashboard',
+        link: this.link,
+        // Optional product logo
+        // logo: 'https://mailgen.js/img/logo.png'
+      },
+    })
+    const email = {
+      body: {
+        name: 'Friend!)',
+        intro: 'Update password',
+        action: {
+          instructions: `It's your new password: ${newPassword}`,
+          button: {
+            color: '#363636', // Optional action button color
+            text: 'To confirm update password, please click here:',
+            link: `${this.link}/auth/confirmRestorePassword/${updatePasswordToken}`,
+          },
+        },
+      },
+    }
+    const emailBody = mailGenerator.generate(email)
+    return emailBody
+  }
+
   async sendVerifyEmail(verifyToken, email) {
     this.#sender.setApiKey(process.env.SENDGRID_API_KEY)
     const msg = {
@@ -55,6 +83,20 @@ class EmailServise {
       from: 'goit.team.2021@meta.ua', // Change to your verified sender
       subject: 'Verify email',
       html: this.#createTemplateVerifyToken(verifyToken),
+    }
+    await this.#sender.send(msg)
+  }
+
+  async sendNewPassword(updatePasswordToken, email, newPassword) {
+    this.#sender.setApiKey(process.env.SENDGRID_API_KEY)
+    const msg = {
+      to: email, // Change to your recipient
+      from: 'goit.team.2021@meta.ua', // Change to your verified sender
+      subject: 'Update password',
+      html: this.#createTemplateUpdatePassword(
+        updatePasswordToken,
+        newPassword
+      ),
     }
     await this.#sender.send(msg)
   }
