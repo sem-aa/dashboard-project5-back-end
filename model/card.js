@@ -37,10 +37,21 @@ const compliteCard = async (userId, cardId) => {
   )
 }
 
+const incompleteCard = async (userId, cardId) => {
+    return await Card.findByIdAndUpdate(
+      { _id: cardId, owner: userId },
+      { status: 'Incomplete' },
+      {
+        new: true,
+      }
+    )
+}
+
 module.exports = {
   getAllCards,
   addCard,
   updateCard,
   compliteCard,
+  incompleteCard,
   removeCard,
 }

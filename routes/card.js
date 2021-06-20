@@ -21,5 +21,6 @@ router.patch(
 )
 
 router.patch('/:cardId/complete', guard, validateObjectId, ctrl.complete)
+router.patch('/:cardId/incomplete', guard, validateObjectId, ctrl.incomplete)
 
 module.exports = router

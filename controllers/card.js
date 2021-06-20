@@ -41,11 +41,28 @@ const complete = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { cardId } = req.params
-    console.log('userId: ', userId)
-    console.log('cardId: ', cardId)
 
     const editedCard = await Card.compliteCard(userId, cardId)
-    console.log('editedCard: ', editedCard)
+
+    if (!editedCard) {
+      return res.status(HttpCode.NOT_FOUND).json({
+        message: 'Card not found',
+      })
+    }
+
+    return res.status(HttpCode.OK).json({ editedCard })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const incomplete = async (req, res, next) => {
+  try {
+    const userId = req.user.id
+    const { cardId } = req.params
+
+    const editedCard = await Card.incompleteCard(userId, cardId)
+
     if (!editedCard) {
       return res.status(HttpCode.NOT_FOUND).json({
         message: 'Card not found',
@@ -76,4 +93,4 @@ const remove = async (req, res, next) => {
   }
 }
 
-module.exports = { getAll, create, update, complete, remove }
+module.exports = { getAll, create, update, complete, incomplete, remove }

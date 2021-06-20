@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 
-// const EmailServise = require('../services/email')
+const generator = require('generate-password')
+const EmailServise = require('../services/email')
 const { HttpCode } = require('../helper/constants')
 
 const User = require('../model/user')
@@ -187,6 +188,69 @@ const logOut = async (req, res, next) => {
   }
 }
 
+const updatePassword = async (req, res, next) => {
+  try {
+    const { email } = req.body
+    const user = await User.getUserByEmail(email)
+    if (!user) {
+      return res.status(HttpCode.NOT_FOUND).json({
+        message: 'User not found',
+      })
+    }
+
+    const newPassword = generator.generate({
+      length: 10,
+      numbers: true,
+    })
+    const hashedPassword = await user.hashNewPassword(newPassword)
+    const updatedUser = await User.setUpdatedPassword(email, hashedPassword)
+
+    try {
+      const emailServise = new EmailServise(process.env.NODE_ENV)
+      await emailServise.sendNewPassword(
+        updatedUser.verifyUpdatePassword,
+        email,
+        newPassword
+      )
+    } catch (error) {
+      console.log('Error in emailServise.sendNewPassword', error.message)
+    }
+
+    return res
+      .status(HttpCode.OK)
+      .json({ message: 'New password sent to email' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const confirmUpdatePassword = async (req, res, next) => {
+  try {
+    const user = await User.getUserByVerifyUpdatePassword(
+      req.params.verifyUpdatePassword
+    )
+
+    if (!user.updatedPassword) {
+      return res.status(HttpCode.BAD_REQUEST).json({
+        message: 'There was no password update request',
+      })
+    }
+
+    if (user) {
+      await User.confirmUpdatePassword(user.id, user.updatedPassword)
+
+      return res.status(HttpCode.OK).json({
+        message: 'New password verification was successful',
+      })
+    }
+    return res.status(HttpCode.NOT_FOUND).json({
+      message: 'User not found',
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 module.exports = {
   register,
   // verifyToken,
@@ -194,4 +258,6 @@ module.exports = {
   logIn,
   refreshTokens,
   logOut,
+  updatePassword,
+  confirmUpdatePassword,
 }
